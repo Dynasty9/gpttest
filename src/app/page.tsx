@@ -16,6 +16,11 @@ export default function Home() {
       return;
     try{
       const result = await queryChatGPT(queryText)  
+      if(result.startsWith("Error"))
+      {
+        setIsLoading(false);  
+        return;
+      }
       setTextureURL(result);
     }
     finally

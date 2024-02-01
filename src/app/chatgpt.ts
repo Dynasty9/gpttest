@@ -10,21 +10,25 @@ export async function queryChatGPT(prompt: string) {
       "API key is not defined. Please set your API key in the .env file"
     );
   }
-  const response = await axios.post(
-    url,
-    {
-      prompt: prompt,
-      n: 1, // Number of images to generate
-      size: "512x512", // Image size
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+  try {
+    const response = await axios.post(
+      url,
+      {
+        prompt: prompt,
+        n: 1, // Number of images to generate
+        size: "512x512", // Image size
       },
-    }
-  );
-  return convertImageToBase64(response.data.data[0].url);
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return convertImageToBase64(response.data.data[0].url);
+  } catch (ex) {
+    return "Error";
+  }
 }
 
 async function convertImageToBase64(url: string) {
