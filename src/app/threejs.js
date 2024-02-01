@@ -117,6 +117,7 @@ function init(container) {
   });
 
   mesh = new THREE.Mesh(geometry, material);
+  mesh.scale.set(2, 2, 2);
   scene.add(mesh);
 
   //
@@ -130,21 +131,21 @@ function init(container) {
 
   // GUI
 
-  const gui = new GUI();
+  // const gui = new GUI();
 
-  const folderSky = gui.addFolder("Sky");
-  folderSky.add(parameters, "elevation", 0, 90, 0.1).onChange(updateSun);
-  folderSky.add(parameters, "azimuth", -180, 180, 0.1).onChange(updateSun);
-  folderSky.open();
+  // const folderSky = gui.addFolder("Sky");
+  // folderSky.add(parameters, "elevation", 0, 90, 0.1).onChange(updateSun);
+  // folderSky.add(parameters, "azimuth", -180, 180, 0.1).onChange(updateSun);
+  // folderSky.open();
 
-  const waterUniforms = water.material.uniforms;
+  // const waterUniforms = water.material.uniforms;
 
-  const folderWater = gui.addFolder("Water");
-  folderWater
-    .add(waterUniforms.distortionScale, "value", 0, 8, 0.1)
-    .name("distortionScale");
-  folderWater.add(waterUniforms.size, "value", 0.1, 10, 0.1).name("size");
-  folderWater.open();
+  // const folderWater = gui.addFolder("Water");
+  // folderWater
+  //   .add(waterUniforms.distortionScale, "value", 0, 8, 0.1)
+  //   .name("distortionScale");
+  // folderWater.add(waterUniforms.size, "value", 0.1, 10, 0.1).name("size");
+  // folderWater.open();
 
   //
 
@@ -166,7 +167,7 @@ function animate() {
 function render() {
   const time = performance.now() * 0.001;
 
-  mesh.position.y = Math.sin(time) * 20 + 5;
+  mesh.position.y = Math.sin(time) * 15 + 20;
   mesh.rotation.x = time * 0.5;
   mesh.rotation.z = time * 0.51;
 
@@ -177,14 +178,27 @@ function render() {
 
 let textureURL;
 
+function createTextureFromBase64(base64Image) {
+  const image = new Image();
+  image.src = base64Image;
+
+  // Create a texture
+  const texture = new THREE.Texture(image);
+  image.onload = () => {
+    // Update texture when the image loads
+    texture.needsUpdate = true;
+  };
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  return texture;
+}
+
 function setTextureURL(url) {
   if (textureURL === url) return;
   textureURL = url;
   //
-  let texture = new THREE.TextureLoader().load(url, function (texture) {
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  });
-  mesh.material.map = texture;
+  // let texture = new THREE.TextureLoader().load(url, function (texture) {
+  //   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  // });
+  mesh.material.map = createTextureFromBase64(url);
 }
-
 export default { init, animate, setTextureURL };

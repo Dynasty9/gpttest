@@ -1,5 +1,6 @@
+"use server";
 import axios from "axios";
-//FIX env to not be public 
+//FIX env to not be public
 const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 const url = "https://api.openai.com/v1/images/generations";
 
@@ -25,9 +26,27 @@ export async function queryChatGPT(prompt: string) {
         },
       }
     );
-    return response.data.data[0].url
+    return convertImageToBase64(response.data.data[0].url);
   } catch (error) {
     console.error("Error in making request to OpenAI:", error);
+    throw error;
+  }
+}
+
+async function convertImageToBase64(url: string) {
+  try {
+    // Fetch the image with a response type of 'arraybuffer'
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+
+    // Convert the array buffer to a Base64 string
+    const base64Image = Buffer.from(response.data, "binary").toString("base64");
+
+    // Determine the content type of the image (assuming JPEG; adjust as needed)
+    const contentType = "image/png"; // Or dynamically determine this if possible
+
+    return `data:${contentType};base64,${base64Image}`;
+  } catch (error) {
+    console.error("Error converting image to Base64:", error);
     throw error;
   }
 }
