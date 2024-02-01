@@ -14,9 +14,14 @@ export default function Home() {
     setIsLoading(true);
     if(queryText == "")
       return;
-    const result = await queryChatGPT(queryText)  
-    setTextureURL(result);
-    setIsLoading(false);
+    try{
+      const result = await queryChatGPT(queryText)  
+      setTextureURL(result);
+    }
+    finally
+    {
+      setIsLoading(false);
+    }
   }
 
   return (

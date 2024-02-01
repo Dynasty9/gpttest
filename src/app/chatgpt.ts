@@ -10,43 +10,32 @@ export async function queryChatGPT(prompt: string) {
       "API key is not defined. Please set your API key in the .env file"
     );
   }
-
-  try {
-    const response = await axios.post(
-      url,
-      {
-        prompt: prompt,
-        n: 1, // Number of images to generate
-        size: "512x512", // Image size
+  const response = await axios.post(
+    url,
+    {
+      prompt: prompt,
+      n: 1, // Number of images to generate
+      size: "512x512", // Image size
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return convertImageToBase64(response.data.data[0].url);
-  } catch (error) {
-    console.error("Error in making request to OpenAI:", error);
-    throw error;
-  }
+    }
+  );
+  return convertImageToBase64(response.data.data[0].url);
 }
 
 async function convertImageToBase64(url: string) {
-  try {
-    // Fetch the image with a response type of 'arraybuffer'
-    const response = await axios.get(url, { responseType: "arraybuffer" });
+  // Fetch the image with a response type of 'arraybuffer'
+  const response = await axios.get(url, { responseType: "arraybuffer" });
 
-    // Convert the array buffer to a Base64 string
-    const base64Image = Buffer.from(response.data, "binary").toString("base64");
+  // Convert the array buffer to a Base64 string
+  const base64Image = Buffer.from(response.data, "binary").toString("base64");
 
-    // Determine the content type of the image (assuming JPEG; adjust as needed)
-    const contentType = "image/png"; // Or dynamically determine this if possible
+  // Determine the content type of the image (assuming JPEG; adjust as needed)
+  const contentType = "image/png"; // Or dynamically determine this if possible
 
-    return `data:${contentType};base64,${base64Image}`;
-  } catch (error) {
-    console.error("Error converting image to Base64:", error);
-    throw error;
-  }
+  return `data:${contentType};base64,${base64Image}`;
 }
