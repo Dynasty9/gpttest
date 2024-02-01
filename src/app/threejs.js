@@ -175,4 +175,16 @@ function render() {
   renderer.render(scene, camera);
 }
 
-export default { init, animate };
+let textureURL;
+
+function setTextureURL(url) {
+  if (textureURL === url) return;
+  textureURL = url;
+  //
+  let texture = new THREE.TextureLoader().load(url, function (texture) {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  });
+  mesh.material.map = texture;
+}
+
+export default { init, animate, setTextureURL };
