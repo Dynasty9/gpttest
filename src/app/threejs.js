@@ -29,7 +29,7 @@ function init(container) {
     1,
     20000
   );
-  camera.position.set(30, 30, 100);
+  camera.position.set(90, 90, 150);
 
   //
 
